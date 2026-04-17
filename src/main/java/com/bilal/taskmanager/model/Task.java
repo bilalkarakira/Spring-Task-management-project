@@ -19,18 +19,23 @@ public class Task {
 
 	@Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-	private long id;
+	private Long id;
 	
 	@NotBlank
 	@NotNull
+	@Column(unique= true)
 	private String title;
 	
 	@Column(nullable= true)
     private String description;
     
-	private boolean completed;
+	private Boolean completed;
     
-	@Column(nullable= false, updatable= true)
+	@Column(nullable= false, updatable= false)
     @CreatedDate
     private LocalDate createdAt;
+	
+	@Column(nullable = true, updatable = true)
+	@CreatedDate
+	private LocalDate updatedAt;
 }
