@@ -42,13 +42,20 @@ public class TaskRepository {
     }
     
     public int update(Long id, Task task) {
-    	String sql = "UPDATE task SET title= ?, description = ?, completed = ? WHERE id = ?";
+    	String sql = "UPDATE task SET title= ?, description = ?, completed = ?, updated_at= ? WHERE id = ?";
     	return jdbcTemplate.update(sql,
 			task.getTitle(),
 			task.getDescription(),
 			task.getCompleted(),
+			task.getUpdatedAt(),
 			id
 			);
+    }
+    
+    public int delete(Long id) {
+    	String sql = "DELETE from task where id=?";
+    	
+    	return jdbcTemplate.update(sql, id);
     }
 
     // The mapper Turns a Database Row into a Java Task Object
@@ -61,6 +68,10 @@ public class TaskRepository {
             task.setDescription(rs.getString("description"));
             task.setCompleted(rs.getBoolean("completed"));
             task.setCreatedAt(rs.getDate("created_at").toLocalDate());
+            java.sql.Date updatedAtSql = rs.getDate("updated_at");
+            if (updatedAtSql != null) {
+                task.setUpdatedAt(updatedAtSql.toLocalDate());
+            }
             return task;
         }
     }

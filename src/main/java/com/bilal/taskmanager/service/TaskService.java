@@ -4,9 +4,11 @@ import java.time.LocalDate;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.stereotype.Service;
 
 import com.bilal.taskmanager.dto.TaskRequest;
+import com.bilal.taskmanager.exception.ResourceNotFoundException;
 import com.bilal.taskmanager.model.Task;
 import com.bilal.taskmanager.repository.TaskRepository;
 
@@ -17,11 +19,19 @@ public class TaskService {
 	private TaskRepository repository;
 	
 	public List<Task> getAllTasks() {
-		return repository.findAll();
+		try {
+			return repository.findAll();			
+		} catch (EmptyResultDataAccessException e) {
+			throw new ResourceNotFoundException("No tasks found");
+		}
 	}
 	
 	public Task getTask(Long id) {
+		try {
 		return repository.findById(id);
+		} catch (EmptyResultDataAccessException e) {
+			throw new ResourceNotFoundException("Task not found with ID: " + id);
+		}
 	}
 	
 	public Task createTask(TaskRequest request) {
@@ -44,7 +54,7 @@ public class TaskService {
 	}
 	
 	public Task updateTask(Long id, TaskRequest request) {
-		Task task = new Task();
+		Task task = repository.findById(id);
 		
 		task.setTitle(request.getTitle());
 		task.setDescription(request.getDescription());
@@ -60,4 +70,19 @@ public class TaskService {
         }
         return task;
 	}
+	
+	public Task deleteTask(Long id) {
+	    try {
+	    	
+	    	Task taskToDelete = repository.findById(id); 
+	    	
+	    	repository.delete(id);
+	    	
+	    	return taskToDelete;
+	    } catch (org.springframework.dao.EmptyResultDataAccessException e) {
+	    	throw new ResourceNotFoundException("Cannot delete. Task with ID " + id + " does not exist.");
+	    }
+	    	
+	}
+		
 }
