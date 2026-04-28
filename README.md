@@ -153,5 +153,3 @@ Key files to inspect during review:
 - The current H2 DB is file-based and committed in `data/` for quick reviewer setup. To use a clean DB, remove the `data/taskdb.mv.db` files before first run.
 
 ---
-
-If you want, I can also add example Postman collection or Swagger/OpenAPI documentation to the repo. Would you like that?
